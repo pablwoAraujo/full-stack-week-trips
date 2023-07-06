@@ -1,4 +1,5 @@
-# Database
+## Database
+First, start a database with docker:
 
 ```bash
 docker pull postgres
@@ -12,4 +13,12 @@ docker run
   -d postgres
 
 docker start trips
+```
+
+## Getting Started
+
+Run the development server:
+
+```bash
+yarn dev
 ```
