@@ -1,9 +1,8 @@
 import { prisma } from "@/lib/prisma";
-import Image from "next/image";
-import ReactCountryFlag from "react-country-flag";
-import TripHeader from "./components/TripHeader";
-import TripReservation from "./components/TripReservation";
 import TripDesciption from "./components/TripDescription";
+import TripHeader from "./components/TripHeader";
+import TripHighlights from "./components/TripHighlights";
+import TripReservation from "./components/TripReservation";
 
 type TypeTripDetails = {
   params: { tripId: string };
@@ -25,6 +24,7 @@ export default async function TripDetails({ params }: TypeTripDetails) {
       <TripHeader trip={trip} />
       <TripReservation trip={trip} />
       <TripDesciption description={trip.description} />
+      <TripHighlights highlights={trip.highlights}/>
     </div>
   );
 }
