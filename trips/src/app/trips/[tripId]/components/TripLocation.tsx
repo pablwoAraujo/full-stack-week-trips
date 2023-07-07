@@ -3,9 +3,13 @@ import Image from "next/image";
 
 interface TripLocationProps {
   location: string;
+  locationDescription: string;
 }
 
-export default function TripLocation({ location }: TripLocationProps) {
+export default function TripLocation({
+  location,
+  locationDescription,
+}: TripLocationProps) {
   return (
     <div className="p-5">
       <h2 className="mb-5 font-semibold text-primaryDarker">Localização</h2>
@@ -24,10 +28,7 @@ export default function TripLocation({ location }: TripLocationProps) {
         {location}
       </h3>
       <p className="mt-2 text-xs leading-5 text-justify text-primaryDarker">
-        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Iste, dicta.
-        Commodi voluptatibus quaerat, iste modi asperiores accusamus temporibus,
-        obcaecati illum repellat enim suscipit nihil dolores, sequi possimus
-        perferendis veniam odit.
+        {locationDescription}
       </p>
 
       <Button className="w-full mt-5" variant={"outlined"}>

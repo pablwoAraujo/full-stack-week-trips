@@ -26,7 +26,7 @@ export default async function TripDetails({ params }: TypeTripDetails) {
       <TripReservation trip={trip} />
       <TripDesciption description={trip.description} />
       <TripHighlights highlights={trip.highlights}/>
-      <TripLocation location={trip.location}/>
+      <TripLocation location={trip.location} locationDescription={trip.locationDescription}/>
     </div>
   );
 }
