@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import Image from "next/image";
 import ReactCountryFlag from "react-country-flag";
 import TripHeader from "./components/TripHeader";
+import TripReservation from "./components/TripReservation";
 
 type TypeTripDetails = {
   params: { tripId: string };
@@ -21,6 +22,7 @@ export default async function TripDetails({ params }: TypeTripDetails) {
   return (
     <div className="container mx-auto">
       <TripHeader trip={trip} />
+      <TripReservation trip={trip} />
     </div>
   );
 }
