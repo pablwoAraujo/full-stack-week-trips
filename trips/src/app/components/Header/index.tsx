@@ -47,7 +47,7 @@ export default function Header() {
           />
 
           {menuIsOpen && (
-            <div className="absolute left-0 flex items-center justify-center w-full h-full bg-white rounded-lg shadow-md top-14">
+            <div className="absolute left-0 z-50 flex items-center justify-center w-full h-full bg-white rounded-lg shadow-md top-14">
               <button
                 className={"text-primary text-sm font-semibold"}
                 onClick={handleLogoutClick}
