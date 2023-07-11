@@ -7,6 +7,7 @@ import { addDays, differenceInDays } from "date-fns";
 import { Controller, useForm } from "react-hook-form";
 
 interface TripReservationProps {
+  tripId: string;
   maxGuests: number;
   pricePerDay: number;
   reservationStartDate: Date;
@@ -21,6 +22,7 @@ interface TripReservationForm {
 }
 
 export default function TripReservation({
+  tripId,
   maxGuests,
   pricePerDay,
   reservationStartDate,
@@ -28,14 +30,51 @@ export default function TripReservation({
 }: TripReservationProps) {
   const {
     control,
-    register,
-    handleSubmit,
-    watch,
     formState: { errors },
+    handleSubmit,
+    register,
+    setError,
+    watch,
   } = useForm<TripReservationForm>();
 
-  const onSubmit = (data: any) => {
-    console.log({ data });
+  const onSubmit = async (data: TripReservationForm) => {
+    const response = await fetch("http://localhost:3000/api/trips/check", {
+      method: "POST",
+      body: JSON.stringify({
+        startDate: data.startDate,
+        endDate: data.endDate,
+        tripId: tripId,
+      }),
+    });
+
+    const res = await response.json();
+    console.log({ res });
+
+    if (res?.error?.message === "TRIP_ALREADY_RESERVED") {
+      setError("startDate", {
+        type: "manual",
+        message: "Esta data já está reservada.",
+      });
+
+      setError("endDate", {
+        type: "manual",
+        message: "Esta data já está reservada.",
+      });
+    }
+
+    if (res?.error?.message === "INVALID_START_DATE") {
+      setError("startDate", {
+        type: "manual",
+        message: "Data inválida.",
+      });
+    }
+
+    if (res?.error?.message === "INVALID_END_DATE") {
+      setError("endDate", {
+        type: "manual",
+        message: "Data inválida.",
+      });
+    }
   };
 
   const startDate = watch("startDate");
@@ -95,10 +134,9 @@ export default function TripReservation({
       <Controller
         name="amountOfReservations"
         control={control}
-        render={({ field: { onChange, value }, fieldState: { error } }) => (
+        render={({ field: { onChange } }) => (
           <Input
             type="number"
-            defaultValue={1}
             min={1}
             max={maxGuests}
             {...register("guests", {
@@ -114,7 +152,6 @@ export default function TripReservation({
               },
             })}
             onChange={onChange}
-            value={value}
             placeholder={`Número de hóspede (max: ${maxGuests})`}
             error={!!errors?.guests}
             errorMessage={errors?.guests?.message}
@@ -127,7 +164,7 @@ export default function TripReservation({
         <p className="text-sm font-medium text-primaryDarker">
           R$
           {startDate && endDate && amount
-            ? differenceInDays(endDate, startDate) * pricePerDay * amount
+            ? differenceInDays(endDate, startDate) * pricePerDay
             : "0"}
         </p>
       </div>
