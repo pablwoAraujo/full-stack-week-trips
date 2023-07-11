@@ -7,7 +7,9 @@ import { Trip } from "@prisma/client";
 import { Controller, useForm } from "react-hook-form";
 
 interface TripReservationProps {
-  trip: Trip;
+  reservationStartDate: Date;
+  reservationEndDate: Date;
+  maxGuests: number;
 }
 
 interface TripReservationForm {
@@ -16,17 +18,25 @@ interface TripReservationForm {
   endDate: Date | null;
 }
 
-export default function TripReservation({ trip }: TripReservationProps) {
+export default function TripReservation({
+  maxGuests,
+  reservationStartDate,
+  reservationEndDate,
+}: TripReservationProps) {
   const {
     control,
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<TripReservationForm>();
 
   const onSubmit = (data: any) => {
     console.log({ data });
   };
+
+  const startDate = watch("startDate");
+  const endDate = watch("endDate");
 
   return (
     <div className="flex flex-col gap-4 px-5">
@@ -48,6 +58,8 @@ export default function TripReservation({ trip }: TripReservationProps) {
               selected={field.value}
               error={!!errors?.startDate}
               errorMessage={errors?.startDate?.message}
+              minDate={reservationStartDate}
+              maxDate={endDate || reservationEndDate}
             />
           )}
         />
@@ -69,6 +81,8 @@ export default function TripReservation({ trip }: TripReservationProps) {
               selected={field.value}
               error={!!errors?.endDate}
               errorMessage={errors?.endDate?.message}
+              minDate={startDate || reservationStartDate}
+              maxDate={reservationEndDate}
             />
           )}
         />
@@ -81,7 +95,7 @@ export default function TripReservation({ trip }: TripReservationProps) {
             message: "Número de hóspedes é obrigatório.",
           },
         })}
-        placeholder={`Número de hóspede (max: ${trip.maxGuests})`}
+        placeholder={`Número de hóspede (max: ${maxGuests})`}
         error={!!errors?.guests}
         errorMessage={errors?.guests?.message}
       />
