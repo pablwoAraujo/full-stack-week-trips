@@ -25,6 +25,7 @@ export default async function TripDetails({ params }: TypeTripDetails) {
       <TripHeader trip={trip} />
       <TripReservation
         maxGuests={trip.maxGuests}
+        pricePerDay={trip.pricePerDay as any}
         reservationStartDate={trip.startDate}
         reservationEndDate={trip.endDate}
       />

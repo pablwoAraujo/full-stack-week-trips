@@ -3,23 +3,26 @@
 import Button from "@/components/Button";
 import DatePicker from "@/components/DatePicker";
 import Input from "@/components/Input";
-import { Trip } from "@prisma/client";
+import { addDays, differenceInDays } from "date-fns";
 import { Controller, useForm } from "react-hook-form";
 
 interface TripReservationProps {
+  maxGuests: number;
+  pricePerDay: number;
   reservationStartDate: Date;
   reservationEndDate: Date;
-  maxGuests: number;
 }
 
 interface TripReservationForm {
   guests: number;
   startDate: Date | null;
   endDate: Date | null;
+  amountOfReservations: number;
 }
 
 export default function TripReservation({
   maxGuests,
+  pricePerDay,
   reservationStartDate,
   reservationEndDate,
 }: TripReservationProps) {
@@ -37,6 +40,7 @@ export default function TripReservation({
 
   const startDate = watch("startDate");
   const endDate = watch("endDate");
+  const amount = watch("amountOfReservations");
 
   return (
     <div className="flex flex-col gap-4 px-5">
@@ -59,7 +63,7 @@ export default function TripReservation({
               error={!!errors?.startDate}
               errorMessage={errors?.startDate?.message}
               minDate={reservationStartDate}
-              maxDate={endDate || reservationEndDate}
+              maxDate={endDate ? addDays(endDate, -1) : reservationEndDate}
             />
           )}
         />
@@ -81,28 +85,51 @@ export default function TripReservation({
               selected={field.value}
               error={!!errors?.endDate}
               errorMessage={errors?.endDate?.message}
-              minDate={startDate || reservationStartDate}
+              minDate={startDate ? addDays(startDate, 1) : reservationStartDate}
               maxDate={reservationEndDate}
             />
           )}
         />
       </div>
 
-      <Input
-        {...register("guests", {
-          required: {
-            value: true,
-            message: "Número de hóspedes é obrigatório.",
-          },
-        })}
-        placeholder={`Número de hóspede (max: ${maxGuests})`}
-        error={!!errors?.guests}
-        errorMessage={errors?.guests?.message}
+      <Controller
+        name="amountOfReservations"
+        control={control}
+        render={({ field: { onChange, value }, fieldState: { error } }) => (
+          <Input
+            type="number"
+            defaultValue={1}
+            min={1}
+            max={maxGuests}
+            {...register("guests", {
+              validate: {
+                biggerThanZero: (value) =>
+                  value > 0 || "Número de hóspedes precisa maior que zero.",
+                maximumAmount: (value) =>
+                  value <= maxGuests || `Número de hóspede (max: ${maxGuests})`,
+              },
+              required: {
+                value: true,
+                message: "Número de hóspedes é obrigatório.",
+              },
+            })}
+            onChange={onChange}
+            value={value}
+            placeholder={`Número de hóspede (max: ${maxGuests})`}
+            error={!!errors?.guests}
+            errorMessage={errors?.guests?.message}
+          />
+        )}
       />
 
       <div className="flex justify-between">
         <p className="text-sm font-medium text-primaryDarker">Total: </p>
-        <p className="text-sm font-medium text-primaryDarker">R$2500 </p>
+        <p className="text-sm font-medium text-primaryDarker">
+          R$
+          {startDate && endDate && amount
+            ? differenceInDays(endDate, startDate) * pricePerDay * amount
+            : "0"}
+        </p>
       </div>
 
       <div className="w-full pb-10 border-b border-grayLighter">
